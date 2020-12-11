@@ -1,10 +1,8 @@
-var colors = ['B', 'W', 'O', 'G', 'Y', 'R'];
+const colors = ['B', 'W', 'O', 'G', 'Y', 'R'];
 
-var cube = Array(6).fill()
+const cube = Array(6).fill()
   .map((arr, i) => Array(3).fill()
     .map(arr2 => Array(3).fill(colors[i])));
-
-Array(9).fill().map(arr => Array(12).fill(''))
 
 function printCube(input) {
   let map = Array(9).fill().map(arr => Array(12).fill(' '));
@@ -32,7 +30,7 @@ function printCube(input) {
   })
 }
 
-var commandFunctions = {
+const commandFunctions = {
   "U": (arr) => {
     let tempFragment = arr[1].shift();
     arr[1].unshift(arr[2].shift());
@@ -95,7 +93,7 @@ var commandFunctions = {
     arr[3][1].unshift(bottomFragment[1]);
     arr[3][2].unshift(bottomFragment[0]);
   },
-  "B": (arr) => {
+  "B'": (arr) => {
     // 0, 1, 3, 5
     let topFragment = arr[0].shift();
     arr[0].unshift([
@@ -119,7 +117,7 @@ var commandFunctions = {
     arr[3][1].push(topFragment[1]);
     arr[3][2].push(topFragment[2]);
   },
-  "B'": (arr) => {
+  "B": (arr) => {
     // 5, 3, 1, 0
     let bottomFragment = arr[5].pop();
     arr[5].push([
@@ -157,10 +155,90 @@ var commandFunctions = {
     arr[3].push(arr[4].pop());
     arr[4].push(tempFragment);
   },
+  "L": (arr) => {
+    // 0 2 4 5
+    let topFragment = [arr[0][0].shift(), arr[0][1].shift(), arr[0][2].shift()];
+    arr[0][0].unshift(arr[4][2].pop());
+    arr[0][1].unshift(arr[4][1].pop());
+    arr[0][2].unshift(arr[4][0].pop());
+    
+    arr[4][0].push(arr[5][2].shift());
+    arr[4][1].push(arr[5][1].shift());
+    arr[4][2].push(arr[5][0].shift());
+
+    arr[5][0].unshift(arr[2][0].shift());
+    arr[5][1].unshift(arr[2][1].shift());
+    arr[5][2].unshift(arr[2][2].shift());
+
+    arr[2][0].unshift(topFragment[0]);
+    arr[2][1].unshift(topFragment[1]);
+    arr[2][2].unshift(topFragment[2]);
+  },
+  "L'": (arr) => {
+    // 0 2 4 5
+    let topFragment = [arr[0][0].shift(), arr[0][1].shift(), arr[0][2].shift()];
+    arr[0][0].unshift(arr[2][0].shift());
+    arr[0][1].unshift(arr[2][1].shift());
+    arr[0][2].unshift(arr[2][2].shift());
+    
+    arr[2][0].unshift(arr[5][0].shift());
+    arr[2][1].unshift(arr[5][1].shift());
+    arr[2][2].unshift(arr[5][2].shift());
+
+    arr[5][0].unshift(arr[4][2].pop());
+    arr[5][1].unshift(arr[4][1].pop());
+    arr[5][2].unshift(arr[4][0].pop());
+
+    arr[4][0].push(topFragment[2]);
+    arr[4][1].push(topFragment[1]);
+    arr[4][2].push(topFragment[0]);
+  },
+  "R": (arr) => {
+    // 0 2 4 5
+    let topFragment = [arr[0][0].pop(), arr[0][1].pop(), arr[0][2].pop()];
+    arr[0][0].push(arr[2][0].pop());
+    arr[0][1].push(arr[2][1].pop());
+    arr[0][2].push(arr[2][2].pop());
+    
+    arr[2][0].push(arr[5][0].pop());
+    arr[2][1].push(arr[5][1].pop());
+    arr[2][2].push(arr[5][2].pop());
+
+    arr[5][0].push(arr[4][2].shift());
+    arr[5][1].push(arr[4][1].shift());
+    arr[5][2].push(arr[4][0].shift());
+
+    arr[4][0].unshift(topFragment[2]);
+    arr[4][1].unshift(topFragment[1]);
+    arr[4][2].unshift(topFragment[0]);
+  },
+  "R'": (arr) => {
+    let topFragment = [arr[0][0].pop(), arr[0][1].pop(), arr[0][2].pop()];
+    arr[0][0].push(arr[4][2].shift());
+    arr[0][1].push(arr[4][1].shift());
+    arr[0][2].push(arr[4][0].shift());
+    
+    arr[4][0].unshift(arr[5][2].pop());
+    arr[4][1].unshift(arr[5][1].pop());
+    arr[4][2].unshift(arr[5][0].pop());
+
+    arr[5][0].push(arr[2][0].pop());
+    arr[5][1].push(arr[2][1].pop());
+    arr[5][2].push(arr[2][2].pop());
+
+    arr[2][0].push(topFragment[0]);
+    arr[2][1].push(topFragment[1]);
+    arr[2][2].push(topFragment[2]);
+  },
 }
 
-// commandFunctions['U'](cube);
-// commandFunctions['D'](cube);
-// commandFunctions["F'"](cube);
+// commandFunctions["U"](cube);
+// commandFunctions["D"](cube);
+// commandFunctions["F"](cube);
+// commandFunctions["B"](cube);
+// commandFunctions["L"](cube);
+// commandFunctions["L"](cube);
+// commandFunctions["R"](cube);
+
 
 printCube(cube);
