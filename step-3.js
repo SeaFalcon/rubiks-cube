@@ -10,7 +10,11 @@ const cube = Array(6).fill()
   .map((arr, i) => Array(3).fill()
     .map(arr2 => Array(3).fill(colors[i])));
 
-function printCube(input) {
+function printCube(input, command) {
+  if (command) {
+    console.log(command);
+  }
+
   let map = Array(9).fill().map(arr => Array(12).fill(' '));
 
   input.forEach((plane, i) => {
@@ -143,9 +147,9 @@ const commandFunctions = {
       arr[3][2].pop()
     ]);
 
-    arr[3][0].unshift(bottomFragment[2]);
-    arr[3][1].unshift(bottomFragment[1]);
-    arr[3][2].unshift(bottomFragment[0]);
+    arr[3][0].push(bottomFragment[2]);
+    arr[3][1].push(bottomFragment[1]);
+    arr[3][2].push(bottomFragment[0]);
   },
   "D": (arr) => {
     let tempFragment = arr[4].pop();
@@ -238,16 +242,17 @@ const commandFunctions = {
   },
 }
 
-// commandFunctions["U"](cube);
-// commandFunctions["D"](cube);
-// commandFunctions["F"](cube);
-// commandFunctions["B"](cube);
-// commandFunctions["L"](cube);
-// commandFunctions["L"](cube);
-// commandFunctions["R"](cube);
-
 const start = new Date().getTime();
+
+Object.keys(commandFunctions).forEach(key => {
+  for(let i=0; i<4; i++){
+    commandFunctions[key](cube);
+  }
+});
+
 printCube(cube);
+
+let operationCount = 0;
 
 rl.setPrompt('CUBE> ');
 rl.prompt();
@@ -262,9 +267,21 @@ rl.on('line', function (line) {
       command += commands.shift();
     }
 
-    if (!commandFunctions[command]) break;
+    if (!isNaN(+commands[0])) {
+      const count = +commands.shift();
+      for (let i = 0; i < count; i++) {
+        if (!commandFunctions[command]) break;
+        commandFunctions[command](cube);
+        operationCount++;
+      }
+      command += count;
+    } else {
+      if (!commandFunctions[command]) break;
+      commandFunctions[command](cube);
+      operationCount++;
+    }
 
-    convertArrayToString(commandFunctions[command](newArray), command);
+    printCube(cube, command);
   }
 
   rl.setPrompt('CUBE> ');
@@ -272,13 +289,16 @@ rl.on('line', function (line) {
 })
   .on('close', function () {
     const elapsed = new Date().getTime() - start;
-    const second = parseInt(elapsed / 1000, 10);
+    let second = parseInt(elapsed / 1000, 10);
     const minute = parseInt(second / 60, 10);
+    second %= 60;
 
     console.log(
       `경과시간: ${minute > 9 ? minute : `0${minute}`}:${second > 9 ? second : `0${second}`}`
     );
 
-    console.log('Bye~');
+    console.log(`조작개수: ${operationCount}`)
+
+    console.log('이용해주셔서 감사합니다. 뚜뚜뚜.');
     process.exit();
   });
