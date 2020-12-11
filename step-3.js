@@ -1,5 +1,4 @@
 const readline = require('readline');
-const { checkServerIdentity } = require('tls');
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -36,9 +35,13 @@ function printCube(input, command) {
     })
   });
 
+  let resultStr = ''
+
   map.forEach(m => {
-    console.log(m.join(''));
+    resultStr += m.join('') + '\n';
   })
+
+  return resultStr;
 }
 
 const commandFunctions = {
@@ -246,25 +249,50 @@ const commandFunctions = {
 function shuffleCube(cube, count) {
   const functionKeys = Object.keys(commandFunctions);
 
-  for(let i=0; i<count; i++){
+  for (let i = 0; i < count; i++) {
     const randomIndex = parseInt(Math.random() * functionKeys.length, 10);
     commandFunctions[functionKeys[randomIndex]](cube);
   }
 }
 
+function checkSolve(cube) {
+  const initialCube = Array(6).fill()
+    .map((arr, i) => Array(3).fill()
+      .map(arr2 => Array(3).fill(colors[i])));
+
+  const current = printCube(cube);
+  const initial = printCube(initialCube);
+
+  if (current == initial) {
+    console.log('축하합니다~ 큐브의 모든 면을 맞추셨습니다!!');
+    rl.close();
+  }
+}
+
 const start = new Date().getTime();
-shuffleCube(cube, 1);
-printCube(cube);
+
+rl.question('큐브를 무작위로 몇번 돌릴까요? (숫자만 입력해주세요) : ', function (answer) {
+  let count = 0;
+
+  if(isNaN(+answer)) {
+    console.log('숫자가 입력되지 않았으므로 큐브를 섞지 않습니다.');
+  }else{
+    count = +answer;
+  }
+  
+  shuffleCube(cube, count);
+  console.log(printCube(cube));
+  rl.setPrompt('CUBE> ');
+  rl.prompt();
+});
 
 let operationCount = 0;
 
-rl.setPrompt('CUBE> ');
-rl.prompt();
 rl.on('line', function (line) {
   const commands = line.split("").map((el) => el);
 
   while (commands.length) {
-    let command = commands.shift();
+    let command = commands.shift().toUpperCase();
     if (command === 'Q') rl.close();
 
     if (commands[0] === "'") {
@@ -285,7 +313,9 @@ rl.on('line', function (line) {
       operationCount++;
     }
 
-    printCube(cube, command);
+    checkSolve(cube);
+
+    console.log(printCube(cube, command));
   }
 
   rl.setPrompt('CUBE> ');
