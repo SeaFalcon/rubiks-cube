@@ -32,4 +32,35 @@ function printCube(input) {
   })
 }
 
+var commandFunctions = {
+  "U": (arr) => {
+    let tempFragment = arr[1].shift();
+    arr[1].unshift(arr[2].shift());
+    arr[2].unshift(arr[3].shift());
+    arr[3].unshift(arr[4].shift());
+    arr[4].unshift(tempFragment);
+  },
+  "U'": (arr) => {
+    let tempFragment = arr[4].shift();
+    arr[4].unshift(arr[3].shift());
+    arr[3].unshift(arr[2].shift());
+    arr[2].unshift(arr[1].shift());
+    arr[1].unshift(tempFragment);
+  },
+  "D": (arr) => {
+    let tempFragment = arr[4].pop();
+    arr[4].push(arr[3].pop());
+    arr[3].push(arr[2].pop());
+    arr[2].push(arr[1].pop());
+    arr[1].push(tempFragment);
+  },
+  "D'": (arr) => {
+    let tempFragment = arr[1].pop();
+    arr[1].push(arr[2].pop());
+    arr[2].push(arr[3].pop());
+    arr[3].push(arr[4].pop());
+    arr[4].push(tempFragment);
+  },
+}
+
 printCube(cube);
