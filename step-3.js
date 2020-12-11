@@ -1,4 +1,5 @@
 const readline = require('readline');
+const { checkServerIdentity } = require('tls');
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -242,14 +243,17 @@ const commandFunctions = {
   },
 }
 
-const start = new Date().getTime();
+function shuffleCube(cube, count) {
+  const functionKeys = Object.keys(commandFunctions);
 
-Object.keys(commandFunctions).forEach(key => {
-  for(let i=0; i<4; i++){
-    commandFunctions[key](cube);
+  for(let i=0; i<count; i++){
+    const randomIndex = parseInt(Math.random() * functionKeys.length, 10);
+    commandFunctions[functionKeys[randomIndex]](cube);
   }
-});
+}
 
+const start = new Date().getTime();
+shuffleCube(cube, 1);
 printCube(cube);
 
 let operationCount = 0;
