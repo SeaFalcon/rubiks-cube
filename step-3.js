@@ -1,3 +1,9 @@
+const readline = require('readline');
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 const colors = ['B', 'W', 'O', 'G', 'Y', 'R'];
 
 const cube = Array(6).fill()
@@ -161,7 +167,7 @@ const commandFunctions = {
     arr[0][0].unshift(arr[4][2].pop());
     arr[0][1].unshift(arr[4][1].pop());
     arr[0][2].unshift(arr[4][0].pop());
-    
+
     arr[4][0].push(arr[5][2].shift());
     arr[4][1].push(arr[5][1].shift());
     arr[4][2].push(arr[5][0].shift());
@@ -180,7 +186,7 @@ const commandFunctions = {
     arr[0][0].unshift(arr[2][0].shift());
     arr[0][1].unshift(arr[2][1].shift());
     arr[0][2].unshift(arr[2][2].shift());
-    
+
     arr[2][0].unshift(arr[5][0].shift());
     arr[2][1].unshift(arr[5][1].shift());
     arr[2][2].unshift(arr[5][2].shift());
@@ -199,7 +205,7 @@ const commandFunctions = {
     arr[0][0].push(arr[2][0].pop());
     arr[0][1].push(arr[2][1].pop());
     arr[0][2].push(arr[2][2].pop());
-    
+
     arr[2][0].push(arr[5][0].pop());
     arr[2][1].push(arr[5][1].pop());
     arr[2][2].push(arr[5][2].pop());
@@ -217,7 +223,7 @@ const commandFunctions = {
     arr[0][0].push(arr[4][2].shift());
     arr[0][1].push(arr[4][1].shift());
     arr[0][2].push(arr[4][0].shift());
-    
+
     arr[4][0].unshift(arr[5][2].pop());
     arr[4][1].unshift(arr[5][1].pop());
     arr[4][2].unshift(arr[5][0].pop());
@@ -240,5 +246,39 @@ const commandFunctions = {
 // commandFunctions["L"](cube);
 // commandFunctions["R"](cube);
 
-
+const start = new Date().getTime();
 printCube(cube);
+
+rl.setPrompt('CUBE> ');
+rl.prompt();
+rl.on('line', function (line) {
+  const commands = line.split("").map((el) => el);
+
+  while (commands.length) {
+    let command = commands.shift();
+    if (command === 'Q') rl.close();
+
+    if (commands[0] === "'") {
+      command += commands.shift();
+    }
+
+    if (!commandFunctions[command]) break;
+
+    convertArrayToString(commandFunctions[command](newArray), command);
+  }
+
+  rl.setPrompt('CUBE> ');
+  rl.prompt();
+})
+  .on('close', function () {
+    const elapsed = new Date().getTime() - start;
+    const second = parseInt(elapsed / 1000, 10);
+    const minute = parseInt(second / 60, 10);
+
+    console.log(
+      `경과시간: ${minute > 9 ? minute : `0${minute}`}:${second > 9 ? second : `0${second}`}`
+    );
+
+    console.log('Bye~');
+    process.exit();
+  });
